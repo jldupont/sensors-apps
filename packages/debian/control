@@ -1,0 +1,14 @@
+Source: sensors-apps
+Priority: optional
+Section: devel
+Build-Depends: python (>= 2.6), debhelper (>= 7), python-support (>= 0.5.3), python-setuptools
+Standards-Version: 3.8.0
+Maintainer: Jean-Lou Dupont <jl@jldupont.com>
+Homepage: http://jldupont.blogspot.com/
+
+Package: sensors-apps
+Architecture: all
+Depends: python (>= 2.6), python-amqplib (>=0.6), python-yaml (>=3.09), ${misc:Depends}, ${python:Depends}
+Description: Collection of applications for the "sensors" project
+ For more details, please see http://github.com/jldupont/sensors-apps
+ .
