@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# @author: Jean-Lou Dupont
+#
+
+mkdir -p $HOME/.sensors-apps
+
+cd /usr/lib/sensors-apps
+
+export DISPLAY=:0.0
+python sensors-event-logger.py

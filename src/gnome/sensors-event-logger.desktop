@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sensors event logger
+Comment=See http://jldupont.blogspot.com/
+Exec=sensors-event-logger
+Icon=sensors-event-logger
