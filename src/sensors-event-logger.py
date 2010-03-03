@@ -2,6 +2,7 @@
 """
     @author: Jean-Lou Dupont
 """
+PKG_NAME="sensors_apps"
 PROJECT_NAME="sensors-apps"
 APP_NAME="event-logger"
 POLL_TIMEOUT=250
@@ -11,7 +12,7 @@ import sys
 import gtk
 
 ## For development environment
-ppkg=os.path.abspath( os.getcwd() + PROJECT_NAME)
+ppkg=os.path.abspath( os.getcwd() + "/" + PKG_NAME)
 if os.path.exists(ppkg):
     sys.path.insert(0, ppkg)
 
@@ -28,9 +29,10 @@ dbus.glib.init_threads()
 from dbus.mainloop.glib import DBusGMainLoop
 DBusGMainLoop(set_as_default=True)
 
-## CUSTOMIZE {{     
+## CUSTOMIZE {{
+from apps import amqp_config 
 from apps import app_event_logger
-     
+from workers import event_logger     
 import sensors_apps.ctls.event_logger
 ## }} CUSTOMIZE 
 

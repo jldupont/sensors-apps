@@ -27,9 +27,7 @@ class AMQPComm(object):
             self.conn = amqp.Connection(insist=True, **self.config)
             self.chan = self.conn.channel()
             self.chan.exchange_declare(exchange=self.exch, type="topic", durable=True, auto_delete=False,)
-            self.log("%conn-open", "info", "Connection to AMQP broker opened")
-        except Exception,e:
-            self.log("%conn-error", "error", "Error whilst connecting to AMQP broker (%s)" % e)
+        except Exception,_e:
             self.closeConn()
             
     def closeConn(self):
@@ -80,20 +78,20 @@ class AMQPCommTx(AMQPComm):
 class AMQPCommRx(AMQPComm):
     
     def __init__(self, config, exch, rkey=None, rq=None):
-        AMQPComm.__init__(config, exch)
+        AMQPComm.__init__(self, config, exch)
         self.oq=Queue()
         self.rkey=rkey
         self.rq=rq
-        self.ctag=id(self)
+        self.ctag=str(id(self))
         
     def gMsg(self):
         try:          msg=self.oq.get_nowait()
-        except Empty: msg=(None, None) 
+        except Empty: msg=(None, None, None) 
         return msg
                
     def _amqpCallback(self, msg):
         """ Callback from AMQP """
-        self.oq.put(("msg", msg.body))
+        self.oq.put(("msg", msg.routing_key, msg.body))
 
     def connect(self):
         """ Perform connection to AMQP broker """
@@ -101,8 +99,14 @@ class AMQPCommRx(AMQPComm):
         if self.conn is not None:
             try:
                 self.chan.queue_declare(queue=self.rq, durable=True, exclusive=False, auto_delete=False)
-                self.chan.queue_bind(queue=self.rq, exchange=self.exch, routing_key=self.RKEY)
+                self.chan.queue_bind(queue=self.rq, exchange=self.exch, routing_key=self.rkey)
                 self.chan.basic_consume(queue=self.rq, no_ack=True, callback=self._amqpCallback, consumer_tag=self.ctag)
-            except:
+            except Exception,e:
+                print e
                 self.closeConn()
+            
+    def wait(self):
+        try:     self.chan.wait()
+        except:  self.closeConn()
+
             

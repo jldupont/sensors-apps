@@ -26,7 +26,6 @@ class AppIcon(object):
     
     def getIconPixBuf(self):
         for path in self._iter():
-            print "path: ", path
             try:    
                 pixbuf = gtk.gdk.pixbuf_new_from_file( path )
                 break
