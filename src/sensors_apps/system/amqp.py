@@ -26,7 +26,7 @@ class AMQPComm(object):
         try:
             self.conn = amqp.Connection(insist=True, **self.config)
             self.chan = self.conn.channel()
-            self.chan.exchange_declare(exchange=self.exch, type="topic", durable=True, auto_delete=False,)
+            self.chan.exchange_declare(exchange=self.exch, type="topic", durable=False, auto_delete=True,)
         except Exception,_e:
             self.closeConn()
             
@@ -98,7 +98,7 @@ class AMQPCommRx(AMQPComm):
         self._connect()
         if self.conn is not None:
             try:
-                self.chan.queue_declare(queue=self.rq, durable=True, exclusive=False, auto_delete=False)
+                self.chan.queue_declare(queue=self.rq, durable=False, exclusive=False, auto_delete=True)
                 self.chan.queue_bind(queue=self.rq, exchange=self.exch, routing_key=self.rkey)
                 self.chan.basic_consume(queue=self.rq, no_ack=True, callback=self._amqpCallback, consumer_tag=self.ctag)
             except Exception,e:

@@ -35,7 +35,7 @@ class AmqpListenerAgent(WorkerClass):
             mtype, rkey, mdata=self.comm.gMsg()
             if mtype is None: 
                 break
-            self.txMsg("msg", [mtype, rkey, mdata])
+            self.txMsg(rkey, mdata)
         
                 
 
@@ -97,8 +97,15 @@ class Manager(object):
             msg=self.currentWorker.rxFromWorker()
             if msg is None:
                 break
-            print "from worker: ", msg
+            try:
+                mtype=msg.pop(0)
+                mdata=msg.pop(0)
+            except:
+                Bus.publish(self, "%llog", "%msg-error", "error", "Error whilst decoding message from AMQP exchange 'org.sensors' ")
+                continue
 
+            ## e.g. "state.io.din"
+            Bus.publish(self, mtype, mdata)
             
     def _hquit(self):
         self.update()
